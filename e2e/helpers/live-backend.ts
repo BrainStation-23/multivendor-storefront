@@ -13,18 +13,30 @@ export async function isBackendReachable(): Promise<boolean> {
   }
 }
 
-/** Guest-readable: vendor profile tied to tenant slug (demo seed uses stable slugs). */
-async function vendorProfileExistsForTenantSlug(slug: string): Promise<boolean> {
+type VendorProfileDoc = {
+  displayName?: string | Record<string, string>;
+};
+
+function displayNameMatches(doc: VendorProfileDoc, expected: string): boolean {
+  const n = doc.displayName;
+  if (typeof n === "string") return n === expected;
+  if (n && typeof n === "object" && typeof n.en === "string") return n.en === expected;
+  return false;
+}
+
+/** Guest-readable vendor-profiles (tenant relation is not populated for anonymous depth queries). */
+async function vendorProfileWithDisplayNameExists(displayName: string): Promise<boolean> {
   try {
     const params = new URLSearchParams();
-    params.set("where[tenant.slug][equals]", slug);
-    params.set("limit", "1");
+    params.set("limit", "50");
     const res = await fetch(`${apiOrigin}/api/vendor-profiles?${params.toString()}`, {
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) return false;
-    const j = (await res.json()) as { docs?: unknown[] };
-    return Array.isArray(j?.docs) && j.docs.length > 0;
+    const j = (await res.json()) as { docs?: VendorProfileDoc[] };
+    const docs = j.docs;
+    if (!Array.isArray(docs)) return false;
+    return docs.some((d) => displayNameMatches(d, displayName));
   } catch {
     return false;
   }
@@ -32,10 +44,10 @@ async function vendorProfileExistsForTenantSlug(slug: string): Promise<boolean> 
 
 /** Enough data for vendor-store-live tests that target Demo Vendor Co. */
 export async function isDemoVendorSeeded(): Promise<boolean> {
-  return vendorProfileExistsForTenantSlug("demo-vendor-co");
+  return vendorProfileWithDisplayNameExists("Demo Vendor Co.");
 }
 
 /** Full multi-tenant demo (Artisan + office category products, etc.). */
 export async function isFullVendorDemoSeeded(): Promise<boolean> {
-  return vendorProfileExistsForTenantSlug("artisan-home-goods");
+  return vendorProfileWithDisplayNameExists("Artisan Home Goods");
 }

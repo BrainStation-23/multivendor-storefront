@@ -14,7 +14,7 @@
     "test:e2e": "playwright test",
     "test:e2e:core": "playwright test e2e/catalog-live.spec.ts e2e/checkout-happy-path-live.spec.ts",
     "test:e2e:smoke": "playwright test e2e/smoke.spec.ts",
-    "test:e2e:live": "playwright test e2e/catalog-live.spec.ts",
+    "test:e2e:live": "playwright test e2e/catalog-live.spec.ts e2e/vendor-store-live.spec.ts",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:install": "playwright install chromium",
     "test:ci": "yarn test:run && yarn test:e2e:smoke",

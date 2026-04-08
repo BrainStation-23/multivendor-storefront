@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { VendorProfile } from "@/lib/types/vendor";
 import { formatDate } from "@/lib/utils/format-date";
+import { lexicalToPlainText } from "@/lib/utils/lexical-plain-text";
 import { VendorRating } from "@/components/vendor/vendor-rating";
 
 type VendorInfoProps = {
@@ -9,14 +10,14 @@ type VendorInfoProps = {
 };
 
 export function VendorInfo({ vendor, locale }: VendorInfoProps) {
+  const aboutText = lexicalToPlainText(vendor.description);
+
   return (
     <section className="space-y-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
       <h2 className="text-lg font-semibold">About Vendor</h2>
       <VendorRating rating={vendor.rating} />
-      {vendor.description ? (
-        <p className="text-sm text-slate-600 dark:text-slate-300">
-          {String(vendor.description)}
-        </p>
+      {aboutText ? (
+        <p className="text-sm text-slate-600 dark:text-slate-300">{aboutText}</p>
       ) : null}
       <p className="text-sm text-slate-600 dark:text-slate-300">
         Joined {formatDate(vendor.joinedAt, locale)}

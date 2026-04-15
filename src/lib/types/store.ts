@@ -5,6 +5,7 @@ export interface Store {
   code: string;
   isActive: boolean;
   isPublicStore: boolean;
+  sortPriority?: number;
   address?: {
     street?: string | null;
     city?: string | null;

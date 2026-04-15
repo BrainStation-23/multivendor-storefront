@@ -4,6 +4,7 @@ import { features } from "@/lib/config/features";
 import { getVendorBySlug } from "@/lib/api/vendors";
 import { getProducts } from "@/lib/api/products";
 import { getMediaUrl } from "@/lib/utils/url";
+import { getSelectedStoreId } from "@/lib/utils/get-store-id";
 import { ProductGrid } from "@/components/product/product-grid";
 import { Pagination } from "@/components/shared/pagination";
 import { VendorBanner } from "@/components/vendor/vendor-banner";
@@ -55,11 +56,13 @@ export default async function VendorStorePage({
     notFound();
   }
 
+  const storeId = await getSelectedStoreId();
   const products = await getProducts({
     tenant: vendor.tenant.id,
     locale,
     page,
     sort: "-createdAt",
+    storeId,
   });
 
   return (

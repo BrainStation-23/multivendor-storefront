@@ -43,22 +43,22 @@ export function CartVendorGroup({
         return (
           <section
             key={vendorId}
-            className="space-y-3 rounded-xl border border-slate-200 p-3 dark:border-slate-800 sm:p-4"
+            className="space-y-3 rounded-xl border border-border bg-card p-3 sm:p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               {vendor?.slug ? (
                 <Link
                   href={`/${locale}/store/${vendor.slug}`}
-                  className="text-sm font-semibold uppercase tracking-wide text-slate-700 underline-offset-4 hover:underline dark:text-slate-200"
+                  className="text-sm font-semibold uppercase tracking-wide text-foreground underline-offset-4 hover:underline"
                 >
                   {vendorName}
                 </Link>
               ) : (
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   {vendorName}
                 </h3>
               )}
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              <p className="text-sm font-medium text-muted-foreground">
                 Subtotal: {formatPrice(groupSubtotal)}
               </p>
             </div>

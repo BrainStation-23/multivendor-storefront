@@ -107,19 +107,19 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-8 sm:px-6 lg:px-8">
-      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900 sm:p-8">
-        <p className="mb-2 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+      <section className="rounded-2xl border border-border bg-muted p-6 sm:p-8">
+        <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
           {locale.toUpperCase()}
         </p>
         <h1 className="text-2xl font-semibold sm:text-3xl">{dict.common.home}</h1>
-        <p className="mt-3 max-w-2xl text-sm text-slate-600 dark:text-slate-300 sm:text-base">
+        <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
           Mobile-first storefront foundation is live. Featured products and top
           categories are loaded from backend APIs.
         </p>
       </section>
 
       {announcementText ? (
-        <section className="rounded-xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-800 dark:border-sky-900/50 dark:bg-sky-950/30 dark:text-sky-200">
+        <section className="rounded-xl border border-primary/25 bg-primary/10 p-4 text-sm text-foreground">
           {announcementText}
         </section>
       ) : null}
@@ -129,13 +129,13 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
           <h2 className="text-lg font-semibold sm:text-xl">Featured Products</h2>
           <Link
             href={`/${locale}/products`}
-            className="text-sm text-slate-600 underline-offset-4 hover:underline dark:text-slate-300"
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
           >
             {dict.common.viewAll}
           </Link>
         </div>
         {featuredProducts.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-600 dark:border-slate-700 dark:text-slate-300">
+          <p className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
             {dict.common.noResults}
           </p>
         ) : (
@@ -149,9 +149,9 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
                 <Link
                   key={product.id}
                   href={`/${locale}/products/${product.slug}`}
-                  className="group overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:shadow-sm dark:border-slate-800 dark:bg-slate-950"
+                  className="group overflow-hidden rounded-xl border border-border bg-card transition hover:shadow-sm"
                 >
-                  <div className="relative aspect-4/3 bg-slate-100 dark:bg-slate-900">
+                  <div className="relative aspect-4/3 bg-muted">
                     {mediaUrl ? (
                       <Image
                         src={mediaUrl}
@@ -168,7 +168,7 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
                     <h3 className="line-clamp-2 text-sm font-medium sm:text-base">
                       {product.name}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                    <p className="text-sm text-muted-foreground">
                       {formatPrice(price)}
                     </p>
                   </div>
@@ -185,13 +185,13 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
             <h2 className="text-lg font-semibold sm:text-xl">Top Vendors</h2>
             <Link
               href={`/${locale}/vendors`}
-              className="text-sm text-slate-600 underline-offset-4 hover:underline dark:text-slate-300"
+              className="text-sm text-muted-foreground underline-offset-4 hover:underline"
             >
               View All Vendors
             </Link>
           </div>
           {vendors.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-600 dark:border-slate-700 dark:text-slate-300">
+            <p className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
               {dict.common.noResults}
             </p>
           ) : (
@@ -207,7 +207,7 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
       <section className="space-y-4">
         <h2 className="text-lg font-semibold sm:text-xl">Top Categories</h2>
         {categories.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 p-6 text-sm text-slate-600 dark:border-slate-700 dark:text-slate-300">
+          <p className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
             {dict.common.noResults}
           </p>
         ) : (
@@ -220,9 +220,9 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
                 <Link
                   key={category.id}
                   href={`/${locale}/categories/${category.slug}`}
-                  className="overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:shadow-sm dark:border-slate-800 dark:bg-slate-950"
+                  className="overflow-hidden rounded-xl border border-border bg-card transition hover:shadow-sm"
                 >
-                  <div className="relative aspect-3/2 bg-slate-100 dark:bg-slate-900">
+                  <div className="relative aspect-3/2 bg-muted">
                     {mediaUrl ? (
                       <Image
                         src={mediaUrl}
@@ -247,15 +247,15 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
         )}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-linear-to-r from-slate-900 to-slate-700 p-6 text-white dark:border-slate-700 sm:p-8">
+      <section className="rounded-2xl border border-primary/20 bg-linear-to-r from-primary to-primary/80 p-6 text-primary-foreground sm:p-8">
         <h2 className="text-xl font-semibold sm:text-2xl">Seasonal Promotion</h2>
-        <p className="mt-2 max-w-2xl text-sm text-slate-200 sm:text-base">
+        <p className="mt-2 max-w-2xl text-sm text-primary-foreground/90 sm:text-base">
           Discover new arrivals and exclusive offers curated for a fast and smooth shopping
           experience on all devices.
         </p>
         <Link
           href={`/${locale}/products`}
-          className="mt-4 inline-flex rounded-md bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-200"
+          className="mt-4 inline-flex rounded-md bg-primary-foreground px-4 py-2 text-sm font-medium text-primary transition hover:bg-primary-foreground/90"
         >
           Explore Products
         </Link>

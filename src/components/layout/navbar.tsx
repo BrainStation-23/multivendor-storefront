@@ -3,6 +3,13 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import {
+  IconClipboard,
+  IconLogout,
+  IconPackage,
+  IconUser,
+} from "@/components/layout/drawer-nav-icons";
+import { HeaderPreferencesMenu } from "@/components/layout/header-preferences-menu";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { SearchBar } from "@/components/layout/search-bar";
@@ -31,6 +38,35 @@ export function Navbar({ locale, navItems }: NavbarProps) {
   const safeItems = useMemo(() => navItems.slice(0, 8), [navItems]);
   const cartCountLabel = itemCount > 99 ? "99+" : String(itemCount);
 
+  const cartIcon = (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden="true">
+      <path
+        d="M3 4h1.2c.4 0 .75.28.84.67L5.4 6H16l-1.2 5.2a1 1 0 0 1-.98.8H7.2a1 1 0 0 1-.98-.8L4.5 4.7M8 16.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm7 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
+  const trackIcon = (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden="true">
+      <path
+        d="M3.5 7.5h11l1.5 3.5v4H4v-7.5Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M3.5 7.5 5 4.5h11M8 4.5v3M14 4.5v3"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+
   return (
     <>
       <div className="relative">
@@ -58,56 +94,64 @@ export function Navbar({ locale, navItems }: NavbarProps) {
           ))}
         </nav>
 
-        <div className="hidden min-w-0 flex-1 items-center justify-end gap-2 xl:flex">
-          <div className="w-full max-w-sm">
+        <div className="hidden min-w-0 flex-1 flex-wrap items-center justify-end gap-x-2 gap-y-2 xl:flex">
+          <div className="min-w-0 max-w-sm flex-1 basis-56">
             <SearchBar locale={locale} />
           </div>
-          <LocaleSwitcher locale={locale} dataTestId="locale-switcher-header" />
-          <ThemeSwitcher idPrefix="header" />
-          <Link
-            href={`/${locale}/cart`}
-            className="rounded-md border border-border px-3 py-1.5 text-sm"
-          >
-            Cart ({itemCount})
-          </Link>
-          <Link
-            href={`/${locale}/track-order`}
-            className="rounded-md border border-border px-3 py-1.5 text-sm"
-          >
-            Track Order
-          </Link>
-          {isAuthenticated ? (
-            <>
-              <Link
-                href={`/${locale}/account`}
-                className="rounded-md border border-border px-3 py-1.5 text-sm"
-              >
-                Account
-              </Link>
-              <button
-                type="button"
-                onClick={() => void logout()}
-                className="rounded-md border border-border px-3 py-1.5 text-sm"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                href={`/${locale}/auth/login`}
-                className="rounded-md border border-border px-3 py-1.5 text-sm"
-              >
-                Login
-              </Link>
-              <Link
-                href={`/${locale}/auth/register`}
-                className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground"
-              >
-                Register
-              </Link>
-            </>
-          )}
+          <div className="flex shrink-0 items-center gap-1.5">
+            <Link
+              href={`/${locale}/track-order`}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              aria-label="Track order"
+              title="Track order"
+            >
+              {trackIcon}
+            </Link>
+            <Link
+              href={`/${locale}/cart`}
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              aria-label={`Shopping cart, ${itemCount} items`}
+              title={`Cart (${itemCount})`}
+            >
+              {cartIcon}
+              <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium leading-4 text-primary-foreground">
+                {cartCountLabel}
+              </span>
+            </Link>
+            <HeaderPreferencesMenu locale={locale} />
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href={`/${locale}/account`}
+                  className="rounded-md border border-border px-3 py-2 text-sm font-medium leading-none"
+                >
+                  Account
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => void logout()}
+                  className="rounded-md border border-border px-3 py-2 text-sm font-medium leading-none"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href={`/${locale}/auth/login`}
+                  className="rounded-md border border-border px-3 py-2 text-sm font-medium leading-none"
+                >
+                  Login
+                </Link>
+                <Link
+                  href={`/${locale}/auth/register`}
+                  className="rounded-md bg-primary px-3 py-2 text-sm font-medium leading-none text-primary-foreground"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="hidden items-center gap-2 md:flex xl:hidden">
@@ -132,19 +176,11 @@ export function Navbar({ locale, navItems }: NavbarProps) {
 
           <Link
             href={`/${locale}/cart`}
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border"
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-muted hover:text-foreground"
             aria-label={`Cart with ${itemCount} items`}
             title="Cart"
           >
-            <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden="true">
-              <path
-                d="M3 4h1.2c.4 0 .75.28.84.67L5.4 6H16l-1.2 5.2a1 1 0 0 1-.98.8H7.2a1 1 0 0 1-.98-.8L4.5 4.7M8 16.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm7 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            {cartIcon}
             <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium leading-4 text-primary-foreground">
               {cartCountLabel}
             </span>
@@ -165,32 +201,41 @@ export function Navbar({ locale, navItems }: NavbarProps) {
                 />
               </svg>
             </MenuButton>
-            <MenuItems className="absolute right-0 z-40 mt-2 w-44 rounded-md border border-border bg-card p-1 text-sm shadow-lg outline-none">
+            <MenuItems className="absolute right-0 z-40 mt-2 w-56 rounded-md border border-border bg-card p-1 text-sm shadow-lg outline-none">
               {isAuthenticated ? (
                 <>
                   <MenuItem>
                     <Link
                       href={`/${locale}/account`}
-                      className="block rounded px-2 py-1.5 hover:bg-muted"
+                      className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted"
                     >
+                      <span className="text-muted-foreground" aria-hidden>
+                        <IconUser className="h-4 w-4" />
+                      </span>
                       Account
                     </Link>
                   </MenuItem>
                   <MenuItem>
                     <Link
                       href={`/${locale}/account/orders`}
-                      className="block rounded px-2 py-1.5 hover:bg-muted"
+                      className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted"
                     >
-                      My Orders
+                      <span className="text-muted-foreground" aria-hidden>
+                        <IconClipboard className="h-4 w-4" />
+                      </span>
+                      My orders
                     </Link>
                   </MenuItem>
                   <MenuItem>
                     <button
                       type="button"
                       onClick={() => void logout()}
-                      className="block w-full rounded px-2 py-1.5 text-left hover:bg-muted"
+                      className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-muted"
                     >
-                      Logout
+                      <span className="text-muted-foreground" aria-hidden>
+                        <IconLogout className="h-4 w-4" />
+                      </span>
+                      Log out
                     </button>
                   </MenuItem>
                 </>
@@ -199,35 +244,52 @@ export function Navbar({ locale, navItems }: NavbarProps) {
                   <MenuItem>
                     <Link
                       href={`/${locale}/auth/login`}
-                      className="block rounded px-2 py-1.5 hover:bg-muted"
+                      className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted"
                     >
-                      Login
+                      <span className="text-muted-foreground" aria-hidden>
+                        <IconUser className="h-4 w-4" />
+                      </span>
+                      Log in
                     </Link>
                   </MenuItem>
                   <MenuItem>
                     <Link
                       href={`/${locale}/auth/register`}
-                      className="block rounded px-2 py-1.5 hover:bg-muted"
+                      className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted"
                     >
+                      <span className="text-muted-foreground" aria-hidden>
+                        <IconUser className="h-4 w-4" />
+                      </span>
                       Register
                     </Link>
                   </MenuItem>
                 </>
               )}
-              <div className="mt-1 border-t border-border pt-1">
-                <MenuItem>
-                  <Link
-                    href={`/${locale}/track-order`}
-                    className="block rounded px-2 py-1.5 hover:bg-muted"
-                  >
-                    Track Order
-                  </Link>
-                </MenuItem>
-              </div>
-              <div className="mt-1 border-t border-border px-2 py-2">
+              <div className="my-1 border-t border-border" />
+              <MenuItem>
+                <Link
+                  href={`/${locale}/track-order`}
+                  className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted"
+                >
+                  <span className="text-muted-foreground" aria-hidden>
+                    <IconPackage className="h-4 w-4" />
+                  </span>
+                  Track order
+                </Link>
+              </MenuItem>
+              <div className="my-1 border-t border-border" />
+              <div className="px-2 py-2">
+                <p className="mb-2 text-xs font-medium text-muted-foreground">
+                  Preferences
+                </p>
                 <div className="flex flex-col gap-2">
-                  <ThemeSwitcher idPrefix="header-compact" />
-                  <LocaleSwitcher locale={locale} dataTestId="locale-switcher-header-compact" />
+                  <ThemeSwitcher idPrefix="header-tablet" fullWidth />
+                  <LocaleSwitcher
+                    locale={locale}
+                    dataTestId="locale-switcher-header-tablet"
+                    showLabel={false}
+                    fullWidth
+                  />
                 </div>
               </div>
             </MenuItems>
@@ -255,19 +317,11 @@ export function Navbar({ locale, navItems }: NavbarProps) {
 
           <Link
             href={`/${locale}/cart`}
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border"
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:bg-muted hover:text-foreground"
             aria-label={`Cart with ${itemCount} items`}
             title="Cart"
           >
-            <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden="true">
-              <path
-                d="M3 4h1.2c.4 0 .75.28.84.67L5.4 6H16l-1.2 5.2a1 1 0 0 1-.98.8H7.2a1 1 0 0 1-.98-.8L4.5 4.7M8 16.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm7 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            {cartIcon}
             <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium leading-4 text-primary-foreground">
               {cartCountLabel}
             </span>

@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useState, useCallback } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import {
   Dialog,
   DialogPanel,
@@ -58,6 +59,34 @@ export function StoreSelector() {
   const { stores, selectedStore, selectStore, isLoading, serviceArea } = useStore();
   const { items, clearCart } = useCart();
   const [pendingChange, setPendingChange] = useState<PendingDeliveryChange | null>(null);
+  const mdUp = useMediaQuery("(min-width: 768px)");
+  const [mobileExpanded, setMobileExpanded] = useState(false);
+
+  const summaryLine = useMemo(() => {
+    const parts: string[] = [];
+    if (serviceArea) {
+      const c = serviceArea.countries.find(
+        (x) => x.id === serviceArea.selectedCountryId,
+      )?.name;
+      const s = serviceArea.subdivisions.find(
+        (x) => x.id === serviceArea.selectedSubdivisionId,
+      )?.name;
+      const loc = serviceArea.localities.find(
+        (x) => x.id === serviceArea.selectedLocalityId,
+      )?.name;
+      if (c) parts.push(c);
+      if (s) parts.push(s);
+      if (loc) parts.push(loc);
+    }
+    if (selectedStore?.name) parts.push(selectedStore.name);
+    return parts.length > 0 ? parts.join(" · ") : "Choose delivery area & store";
+  }, [serviceArea, selectedStore]);
+
+  useEffect(() => {
+    if (mdUp) {
+      setMobileExpanded(false);
+    }
+  }, [mdUp]);
 
   const handleStorePick = useCallback(
     (id: string) => {
@@ -111,15 +140,62 @@ export function StoreSelector() {
 
   return (
     <>
-      <div className="flex max-w-full flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
+      {!mdUp ? (
+        <button
+          type="button"
+          onClick={() => setMobileExpanded((v) => !v)}
+          className="flex w-full items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-left text-sm text-foreground shadow-sm transition hover:bg-muted/60"
+          aria-expanded={mobileExpanded}
+        >
+          <span className="flex min-w-0 items-center gap-2">
+            <svg
+              viewBox="0 0 20 20"
+              className="h-4 w-4 shrink-0 text-muted-foreground"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M10 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M3.5 8.2c1.5-3 4.5-4.7 6.5-4.7s5 1.7 6.5 4.7c1.6 3.1 1.6 7.5 0 10.6-1.5 3-4.5 4.7-6.5 4.7s-5-1.7-6.5-4.7c-1.6-3.1-1.6-7.5 0-10.6Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="truncate font-medium">{summaryLine}</span>
+          </span>
+          <svg
+            viewBox="0 0 20 20"
+            className={`h-4 w-4 shrink-0 text-muted-foreground transition ${mobileExpanded ? "rotate-180" : ""}`}
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 8l4 4 4-4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      ) : null}
+
+      <div
+        className={`flex max-w-full flex-col gap-2 sm:flex-row sm:items-start sm:gap-3 ${!mdUp && !mobileExpanded ? "hidden" : ""} ${!mdUp && mobileExpanded ? "mt-2 border-t border-border pt-2" : ""}`}
+      >
         {serviceArea && (
-          <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
+          <div className="flex min-w-0 flex-col gap-2 text-xs sm:flex-row sm:flex-wrap sm:items-center sm:gap-1.5">
             <label className="sr-only" htmlFor="bs-geo-country">
               Country
             </label>
             <select
               id="bs-geo-country"
-              className="max-w-36 rounded-md border border-input bg-background py-1 pl-2 pr-6 text-xs text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring/50"
+              className="w-full min-w-0 rounded-md border border-input bg-background py-1.5 pl-2 pr-6 text-xs text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring/50 sm:max-w-36"
               value={serviceArea.selectedCountryId ?? ""}
               onChange={(e) => {
                 const v = e.target.value;
@@ -142,7 +218,7 @@ export function StoreSelector() {
             </label>
             <select
               id="bs-geo-sub"
-              className="max-w-40 rounded-md border border-input bg-background py-1 pl-2 pr-6 text-xs text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring/50"
+              className="w-full min-w-0 rounded-md border border-input bg-background py-1.5 pl-2 pr-6 text-xs text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring/50 sm:max-w-40"
               value={serviceArea.selectedSubdivisionId ?? ""}
               onChange={(e) => {
                 const v = e.target.value;
@@ -167,7 +243,7 @@ export function StoreSelector() {
                 </label>
                 <select
                   id="bs-geo-loc"
-                  className="max-w-40 rounded-md border border-input bg-background py-1 pl-2 pr-6 text-xs text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring/50"
+                  className="w-full min-w-0 rounded-md border border-input bg-background py-1.5 pl-2 pr-6 text-xs text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring/50 sm:max-w-40"
                   value={serviceArea.selectedLocalityId ?? ""}
                   onChange={(e) => {
                     const v = e.target.value;
@@ -216,8 +292,8 @@ export function StoreSelector() {
 
         {stores.length > 0 && (
           <Listbox value={selectedStore?.id ?? ""} onChange={handleStorePick}>
-            <div className="relative shrink-0">
-              <ListboxButton className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium text-foreground shadow-sm transition hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring/60 sm:text-sm">
+            <div className="relative w-full shrink-0 sm:w-auto">
+              <ListboxButton className="inline-flex w-full items-center justify-between gap-1.5 rounded-md border border-border bg-background px-2.5 py-1.5 text-xs font-medium text-foreground shadow-sm transition hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring/60 sm:inline-flex sm:w-auto sm:justify-start sm:text-sm">
                 <svg
                   viewBox="0 0 20 20"
                   className="h-4 w-4 shrink-0 text-muted-foreground"
@@ -232,7 +308,7 @@ export function StoreSelector() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className="max-w-40 truncate">
+                <span className="min-w-0 flex-1 truncate text-left sm:max-w-40">
                   {selectedStore?.name ?? "Select Store"}
                 </span>
                 <svg
@@ -257,7 +333,7 @@ export function StoreSelector() {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <ListboxOptions className="absolute right-0 z-50 mt-1 max-h-60 w-64 overflow-auto rounded-md border border-border bg-card py-1 text-sm text-foreground shadow-lg outline-none">
+                <ListboxOptions className="absolute left-0 right-0 z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-border bg-card py-1 text-sm text-foreground shadow-lg outline-none sm:left-auto sm:right-0 sm:w-64">
                   {stores.map((store) => (
                     <ListboxOption
                       key={store.id}

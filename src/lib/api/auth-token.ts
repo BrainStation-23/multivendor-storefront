@@ -1,4 +1,4 @@
-/** Browser-only JWT for cross-origin API calls when the HttpOnly cookie is not sent to :3010. */
+/** Browser-only JWT for cross-origin API calls when the HttpOnly cookie is not sent to the MV backend origin. */
 const STORAGE_KEY = "bs-payload-jwt";
 
 export function getAuthToken(): string | null {

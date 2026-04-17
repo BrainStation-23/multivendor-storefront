@@ -1,6 +1,8 @@
 import { http, HttpResponse } from "msw";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3010/api";
+import { DEFAULT_MV_API_URL } from "@/lib/config/backend-defaults";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || DEFAULT_MV_API_URL;
 
 function apiRoot() {
   return new URL(API_URL.endsWith("/") ? API_URL : `${API_URL}/`);

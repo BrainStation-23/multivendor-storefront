@@ -1,6 +1,9 @@
 /** Shared checks for specs that need a running Payload API. */
 
-export const apiOrigin = process.env.PLAYWRIGHT_API_ORIGIN || "http://localhost:3010";
+import { DEFAULT_MV_BACKEND_ORIGIN } from "@/lib/config/backend-defaults";
+
+export const apiOrigin =
+  process.env.PLAYWRIGHT_API_ORIGIN || DEFAULT_MV_BACKEND_ORIGIN;
 
 export async function isBackendReachable(): Promise<boolean> {
   try {

@@ -1,3 +1,4 @@
+import { DEFAULT_MV_BACKEND_ORIGIN } from "../config/backend-defaults";
 import { getAuthToken } from "./auth-token";
 
 type ApiClientOptions = RequestInit & {
@@ -18,7 +19,7 @@ function normalizeApiBase(url: string) {
  */
 function getBaseUrl() {
   const backendOrigin = normalizeApiBase(
-    process.env.BACKEND_URL || "http://localhost:3010",
+    process.env.BACKEND_URL || DEFAULT_MV_BACKEND_ORIGIN,
   );
   const serverApiBase = `${backendOrigin}/api`;
 

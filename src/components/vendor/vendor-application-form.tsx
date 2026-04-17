@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DEFAULT_MV_API_URL } from "@/lib/config/backend-defaults";
 import { ApiError } from "@/lib/api/client";
 import { submitVendorApplication } from "@/lib/api/vendors";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -28,7 +29,7 @@ type UploadResult = {
 };
 
 function getMediaUploadUrl() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3010/api";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || DEFAULT_MV_API_URL;
   return `${apiUrl.replace(/\/api$/, "")}/api/media`;
 }
 
@@ -38,7 +39,7 @@ function getAdminPanelUrl() {
     return explicit;
   }
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3010/api";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || DEFAULT_MV_API_URL;
   return `${apiUrl.replace(/\/api$/, "")}/admin`;
 }
 

@@ -20,7 +20,7 @@
     "test:ci": "yarn test:run && yarn test:e2e:smoke",
     "test:ci:core-e2e": "yarn test:run && yarn test:e2e:core",
     "test:all": "yarn test:run && yarn test:e2e",
-    "sync:api-types": "openapi-typescript ${BACKEND_URL:-http://localhost:3010}/api/openapi-all.json -o src/lib/types/api.generated.ts"
+    "sync:api-types": "openapi-typescript ${BACKEND_URL:-http://localhost:4000}/api/openapi-all.json -o src/lib/types/api.generated.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",

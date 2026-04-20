@@ -104,3 +104,14 @@ export async function applyCoupon(
 
   return response.doc;
 }
+
+/** Removes applied coupon (server recalculates subtotal / discount). */
+export async function clearCartCoupon(cartId: string, guestId?: string): Promise<Cart> {
+  const response = await apiClient<CartDocumentResponse>(`/carts/${cartId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ couponCode: "" }),
+    guestId,
+  });
+
+  return response.doc;
+}

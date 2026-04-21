@@ -176,7 +176,7 @@ export function StoreSelector() {
       ) : null}
 
       <div
-        className={`flex max-w-full flex-col gap-2 sm:flex-row sm:items-start sm:gap-3 sm:justify-between ${!mdUp && !mobileExpanded ? "hidden" : ""} ${!mdUp && mobileExpanded ? "mt-2 border-t border-border pt-2" : ""}`}
+        className={`flex max-w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 sm:justify-between ${!mdUp && !mobileExpanded ? "hidden" : ""} ${!mdUp && mobileExpanded ? "mt-2 border-t border-border pt-2" : ""}`}
       >
         <StoreDeliveryPicker
           idPrefix="bs-geo"

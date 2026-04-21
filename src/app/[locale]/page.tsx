@@ -15,6 +15,8 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { i18nConfig, type Locale } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
 import { VendorCard } from "@/components/vendor/vendor-card";
+import { HomeHeroCarousel } from "@/components/home/home-hero-carousel";
+import { getHomeHeroSlides } from "@/lib/cms/home-hero";
 
 type LocalePageProps = {
   params: Promise<{ locale: string }>;
@@ -98,31 +100,32 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
   const safeLocale = locale as Locale;
   const storeId = await getSelectedStoreId();
   const dict = await getDictionary(safeLocale);
-  const [featuredProducts, categories, vendors, header] = await Promise.all([
+  const [featuredProducts, categories, vendors, header, homeHeroSlides] = await Promise.all([
     getFeaturedProducts(safeLocale, storeId),
     getRootCategories(safeLocale),
     getTopVendors(),
     getHeader(safeLocale).catch(() => null),
+    getHomeHeroSlides(safeLocale),
   ]);
   const headerData = header as Record<string, unknown> | null;
   const announcement = headerData?.announcementBar as Record<string, unknown> | undefined;
+  const announcementCopy =
+    typeof announcement?.message === "string"
+      ? announcement.message
+      : typeof announcement?.text === "string"
+        ? announcement.text
+        : null;
   const announcementText =
-    announcement?.enabled === true && typeof announcement.text === "string"
-      ? announcement.text
-      : null;
+    announcement?.enabled === true && announcementCopy ? announcementCopy : null;
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-8 sm:px-6 lg:px-8">
-      <section className="rounded-2xl border border-border bg-muted p-6 sm:p-8">
-        <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
-          {locale.toUpperCase()}
-        </p>
-        <h1 className="text-2xl font-semibold sm:text-3xl">{dict.common.home}</h1>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
-          Mobile-first storefront foundation is live. Featured products and top
-          categories are loaded from backend APIs.
-        </p>
-      </section>
+      <HomeHeroCarousel
+        slides={homeHeroSlides}
+        locale={locale}
+        fallbackTitle={dict.common.home}
+        fallbackDescription="Mobile-first storefront foundation is live. Featured products and top categories are loaded from backend APIs."
+      />
 
       {announcementText ? (
         <section className="rounded-xl border border-primary/25 bg-primary/10 p-4 text-sm text-foreground">

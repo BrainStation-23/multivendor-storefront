@@ -33,6 +33,16 @@ export const features = {
    * stock location. Set to "false" to show all active geography (e.g. admin preview).
    */
   geoListOnlyServedAreas: process.env.NEXT_PUBLIC_GEO_LIST_ONLY_SERVED !== "false",
+  /**
+   * When true, first visit (no saved service area) auto-picks first country, Dhaka/Chattogram-style
+   * default subdivision, and a store — legacy demo behavior.
+   * When false (default), user must select country + region, or use “Use my location”, before
+   * any store is bound for checkout.
+   */
+  autoSelectDefaultServiceArea:
+    process.env.NEXT_PUBLIC_AUTO_SELECT_DEFAULT_SERVICE_AREA === "true",
+  /** “Use my location” + reverse geocode for service area prefill (geocoder is configured per deploy). */
+  geolocationPrefill: process.env.NEXT_PUBLIC_GEOLOCATION_PREFILL === "true",
   i18n: {
     locales: (process.env.NEXT_PUBLIC_SUPPORTED_LOCALES || "en,bn")
       .split(",")

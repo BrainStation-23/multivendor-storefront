@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+import { DEFAULT_MV_BACKEND_ORIGIN } from "./src/lib/config/backend-defaults";
+
+const mvBackendPort =
+  new URL(DEFAULT_MV_BACKEND_ORIGIN).port || "4000";
+
 function toOrigin(value: string, fallback: string) {
   try {
     return new URL(value).origin;
@@ -11,10 +16,15 @@ function toOrigin(value: string, fallback: string) {
 const nextConfig: NextConfig = {
   output: "standalone",
   async headers() {
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:3010";
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3010/api";
-    const backendOrigin = toOrigin(backendUrl, "http://localhost:3010");
-    const apiOrigin = toOrigin(apiUrl, "http://localhost:3010");
+    const backendUrl = process.env.BACKEND_URL || DEFAULT_MV_BACKEND_ORIGIN;
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      `${DEFAULT_MV_BACKEND_ORIGIN}/api`;
+    const backendOrigin = toOrigin(backendUrl, DEFAULT_MV_BACKEND_ORIGIN);
+    const apiOrigin = toOrigin(
+      apiUrl,
+      `${DEFAULT_MV_BACKEND_ORIGIN}/api`,
+    );
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
@@ -53,13 +63,13 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
-        port: "3010",
+        port: mvBackendPort,
         pathname: "/api/media/file/**",
       },
     ],
   },
   env: {
-    BACKEND_URL: process.env.BACKEND_URL || "http://localhost:3010",
+    BACKEND_URL: process.env.BACKEND_URL || DEFAULT_MV_BACKEND_ORIGIN,
   },
 };
 

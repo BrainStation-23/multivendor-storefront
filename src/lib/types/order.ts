@@ -19,6 +19,8 @@ export interface OrderItem {
   unitPrice: number;
   totalPrice: number;
   productImage: string | null;
+  /** Multivendor: vendor display name at checkout (prefer over live tenant). */
+  vendorNameSnapshot?: string | null;
 }
 
 export type OrderStatus =
@@ -35,6 +37,8 @@ export interface SubOrder {
   id: string;
   subOrderNumber: string;
   tenant: { id: string; name: string; slug: string } | string;
+  /** Vendor display name at checkout (prefer over live tenant name). */
+  tenantNameSnapshot?: string | null;
   status: OrderStatus;
   items: OrderItem[];
   subtotal: number;
@@ -46,11 +50,20 @@ export interface SubOrder {
   deliveredAt: string | null;
 }
 
+/** Buyer identity at checkout (no payment data). Immutable on the server after create. */
+export interface BuyerSnapshot {
+  email?: string | null;
+  name?: string | null;
+  phone?: string | null;
+  locale?: string | null;
+}
+
 export interface Order {
   id: string;
   orderNumber: string;
   customer: { id: string; email: string } | string | null;
   guestEmail: string | null;
+  buyerSnapshot?: BuyerSnapshot | null;
   status: OrderStatus;
   items: OrderItem[];
   subOrders: SubOrder[];
@@ -73,11 +86,31 @@ export interface CheckoutRequest {
   billingAddress: AddressSnapshot;
   shippingMethodIds?: string[];
   guestEmail?: string;
+  guestPhone?: string;
+  simulatePayment?: boolean;
+}
+
+export interface CheckoutOrderSummary {
+  id: string;
+  orderNumber: string;
+  items?: Array<{
+    productName: string;
+    variantName?: string;
+    sku: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+  }>;
+  grandTotal?: number;
+  subtotal?: number;
+  currency?: string;
+  guestEmail?: string;
+  guestPhone?: string;
+  shippingAddress?: AddressSnapshot;
 }
 
 export interface CheckoutResponse {
-  orderId: string;
-  orderNumber: string;
-  paymentRedirectUrl: string;
-  transaction: { id: string; status: string };
+  order: CheckoutOrderSummary;
+  transaction?: { id: string };
+  paymentRedirectUrl?: string;
 }

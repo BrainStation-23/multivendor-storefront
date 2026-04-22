@@ -25,5 +25,10 @@ export interface Cart {
   items: CartItem[];
   subtotal: number;
   couponCode: string | null;
+  /** From API after a valid coupon is applied */
+  discountTotal?: number | null;
+  /** subtotal - discount (excludes shipping) */
+  grandTotal?: number | null;
+  store: string | { id: string; name: string } | null;
   expiresAt: string | null;
 }

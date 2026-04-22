@@ -23,7 +23,9 @@ function statusVariant(status: OrderStatus) {
   return "warning" as const;
 }
 
-function getTenantLabel(tenant: SubOrder["tenant"]) {
+function getTenantLabel(tenant: SubOrder["tenant"], tenantNameSnapshot?: string | null) {
+  const snap = tenantNameSnapshot?.trim();
+  if (snap) return snap;
   if (typeof tenant === "string") {
     return "Vendor";
   }
@@ -62,12 +64,33 @@ export function OrderDetail({ order, locale, isMultivendor }: OrderDetailProps) 
         </p>
       </header>
 
+      {order.buyerSnapshot &&
+      (order.buyerSnapshot.email || order.buyerSnapshot.name || order.buyerSnapshot.phone) ? (
+        <section className="rounded-xl border border-slate-200 p-4 text-sm dark:border-slate-800">
+          <h2 className="text-lg font-semibold">Contact at time of order</h2>
+          <div className="mt-2 space-y-1 text-slate-600 dark:text-slate-300">
+            {order.buyerSnapshot.name ? <p>{order.buyerSnapshot.name}</p> : null}
+            {order.buyerSnapshot.email ? <p>{order.buyerSnapshot.email}</p> : null}
+            {order.buyerSnapshot.phone ? <p>{order.buyerSnapshot.phone}</p> : null}
+          </div>
+        </section>
+      ) : null}
+
       <section className="space-y-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
         <h2 className="text-lg font-semibold">Items</h2>
-        {order.items.map((item) => (
-          <div key={item.id} className="flex items-start justify-between gap-3 text-sm">
+        {(order.items ?? []).map((item, index) => (
+          <div
+            key={
+              item.id ||
+              `${order.orderNumber}-line-${index}-${String(item.productName ?? "")}-${item.variantName ?? ""}`
+            }
+            className="flex items-start justify-between gap-3 text-sm"
+          >
             <div>
-              <p className="font-medium">{item.productName}</p>
+              <p className="font-medium">{item.productName ?? "Item"}</p>
+              {item.vendorNameSnapshot ? (
+                <p className="text-xs text-slate-500 dark:text-slate-400">{item.vendorNameSnapshot}</p>
+              ) : null}
               <p className="text-slate-600 dark:text-slate-300">
                 Qty {item.quantity}
                 {item.variantName ? ` - ${item.variantName}` : ""}
@@ -89,7 +112,7 @@ export function OrderDetail({ order, locale, isMultivendor }: OrderDetailProps) 
               <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-2">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                    {getTenantLabel(subOrder.tenant)}
+                    {getTenantLabel(subOrder.tenant, subOrder.tenantNameSnapshot)}
                   </p>
                   <p className="font-medium">Sub-order #{subOrder.subOrderNumber}</p>
                 </div>
@@ -99,13 +122,21 @@ export function OrderDetail({ order, locale, isMultivendor }: OrderDetailProps) 
               </summary>
               <div className="mt-4 space-y-4">
                 <div className="space-y-2">
-                  {subOrder.items.map((item) => (
+                  {(subOrder.items ?? []).map((item, index) => (
                     <div
-                      key={item.id}
+                      key={
+                        item.id ||
+                        `${subOrder.id}-line-${index}-${String(item.productName ?? "")}-${item.variantName ?? ""}`
+                      }
                       className="flex items-start justify-between gap-3 text-sm"
                     >
                       <div>
-                        <p className="font-medium">{item.productName}</p>
+                        <p className="font-medium">{item.productName ?? "Item"}</p>
+                        {item.vendorNameSnapshot ? (
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {item.vendorNameSnapshot}
+                          </p>
+                        ) : null}
                         <p className="text-slate-600 dark:text-slate-300">
                           Qty {item.quantity}
                           {item.variantName ? ` - ${item.variantName}` : ""}
@@ -137,9 +168,9 @@ export function OrderDetail({ order, locale, isMultivendor }: OrderDetailProps) 
                 </div>
 
                 <div className="grid gap-2 text-sm sm:grid-cols-3">
-                  {getSubOrderTimeline(subOrder, locale).map((step) => (
+                  {getSubOrderTimeline(subOrder, locale).map((step, stepIndex) => (
                     <div
-                      key={step.label}
+                      key={`${subOrder.id}-${step.label}-${stepIndex}`}
                       className={`rounded-lg border p-2 ${
                         step.done
                           ? "border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/40"

@@ -2,13 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { getProducts } from "@/lib/api/products";
 import { getVendorProfiles } from "@/lib/api/vendors";
-import { getHeader } from "@/lib/api/globals";
 import { features } from "@/lib/config/features";
 import { PriceDisplay } from "@/components/shared/price-display";
-import { SaleBadge } from "@/components/product/sale-badge";
 import { getMediaUrl } from "@/lib/utils/url";
 import { getProductMedia } from "@/lib/utils/product-media";
-import { resolveSalePresentation } from "@/lib/utils/sale-presentation";
 import type { SaleDisplayMode } from "@/lib/utils/sale-presentation";
 import { getSelectedStoreId } from "@/lib/utils/get-store-id";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -100,23 +97,13 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
   const safeLocale = locale as Locale;
   const storeId = await getSelectedStoreId();
   const dict = await getDictionary(safeLocale);
-  const [featuredProducts, categories, vendors, header, homeHeroSlides] = await Promise.all([
+  const [featuredProducts, categories, vendors, homeHeroSlides] = await Promise.all([
     getFeaturedProducts(safeLocale, storeId),
     getRootCategories(safeLocale),
     getTopVendors(),
-    getHeader(safeLocale).catch(() => null),
     getHomeHeroSlides(safeLocale),
   ]);
-  const headerData = header as Record<string, unknown> | null;
-  const announcement = headerData?.announcementBar as Record<string, unknown> | undefined;
-  const announcementCopy =
-    typeof announcement?.message === "string"
-      ? announcement.message
-      : typeof announcement?.text === "string"
-        ? announcement.text
-        : null;
-  const announcementText =
-    announcement?.enabled === true && announcementCopy ? announcementCopy : null;
+  // Announcement bar is shown once in <Header> (layout); do not duplicate it below the hero.
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-8 sm:px-6 lg:px-8">
@@ -126,12 +113,6 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
         fallbackTitle={dict.common.home}
         fallbackDescription="Mobile-first storefront foundation is live. Featured products and top categories are loaded from backend APIs."
       />
-
-      {announcementText ? (
-        <section className="rounded-xl border border-primary/25 bg-primary/10 p-4 text-sm text-foreground">
-          {announcementText}
-        </section>
-      ) : null}
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -154,11 +135,6 @@ export default async function LocaleHomePage({ params }: LocalePageProps) {
               const mediaUrl = getMediaUrl(firstImage?.url);
               const price = Number(product.basePrice ?? 0);
               const currency = product.currency ?? "USD";
-              const salePresentation = resolveSalePresentation({
-                sellingPrice: price,
-                compareAtPrice: product.compareAtPrice ?? null,
-                productSaleDisplayMode: product.saleDisplayMode,
-              });
 
               return (
                 <Link

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { apiClient } from "./client";
 
 type NextFetchOptions = {
@@ -18,7 +19,7 @@ function buildGlobalPath(globalName: "header" | "footer", locale: string) {
   return `/globals/${globalName}?${params.toString()}`;
 }
 
-export async function getHeader(
+async function fetchHeader(
   locale: string,
   options: GlobalRequestOptions = {},
 ) {
@@ -27,7 +28,10 @@ export async function getHeader(
   } as RequestInit);
 }
 
-export async function getFooter(
+/** Deduplicate identical fetches in one RSC pass (e.g. layout + home both read globals). */
+export const getHeader = cache(fetchHeader);
+
+async function fetchFooter(
   locale: string,
   options: GlobalRequestOptions = {},
 ) {
@@ -35,3 +39,5 @@ export async function getFooter(
     next: { revalidate: 60, ...options.next },
   } as RequestInit);
 }
+
+export const getFooter = cache(fetchFooter);

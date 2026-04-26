@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { apiClient } from "@/lib/api/client";
 import type { CmsPage } from "@/lib/types/cms-page";
 import type { PaginatedResponse } from "@/lib/types/api-response";
@@ -7,7 +8,7 @@ import type { PaginatedResponse } from "@/lib/types/api-response";
  * Uses the same first URL segment as the app (`/[locale]/[slug]`), so slugs must not
  * collide with static routes (enforced in Payload `pages` collection).
  */
-export async function getPageBySlug(
+async function loadPageBySlug(
   slug: string,
   locale: string,
 ): Promise<CmsPage | null> {
@@ -24,3 +25,6 @@ export async function getPageBySlug(
 
   return res.docs[0] ?? null;
 }
+
+/** Deduplicate `generateMetadata` + page both requesting the same slug. */
+export const getPageBySlug = cache(loadPageBySlug);

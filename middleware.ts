@@ -40,5 +40,9 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // Include `/` explicitly: the pattern below can miss the bare root in some Next versions.
+  matcher: [
+    "/",
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };

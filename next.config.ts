@@ -13,17 +13,79 @@ function toOrigin(value: string, fallback: string) {
   }
 }
 
+/** Origin of the Payload API, for CSP and next/image. Prefer BACKEND_URL, else from NEXT_PUBLIC_API_URL. */
+function resolveBackendPublicOrigin(): string {
+  if (process.env.BACKEND_URL?.trim()) {
+    return toOrigin(process.env.BACKEND_URL, DEFAULT_MV_BACKEND_ORIGIN);
+  }
+  const api = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (api) {
+    return toOrigin(api, DEFAULT_MV_BACKEND_ORIGIN);
+  }
+  return DEFAULT_MV_BACKEND_ORIGIN;
+}
+
+type RemotePattern = NonNullable<
+  NonNullable<NextConfig["images"]>["remotePatterns"]
+>[number];
+
+/** Local dev + production API host; without this, `next/image` blocks cross-origin media URLs. */
+function buildMediaRemotePatterns(): RemotePattern[] {
+  const list: RemotePattern[] = [
+    {
+      protocol: "http",
+      hostname: "localhost",
+      port: "3000",
+      pathname: "/api/media/file/**",
+    },
+    {
+      protocol: "http",
+      hostname: "localhost",
+      port: mvBackendPort,
+      pathname: "/api/media/file/**",
+    },
+  ];
+  const seen = new Set<string>();
+  for (const p of list) {
+    seen.add(`${p.protocol}://${p.hostname}:${p.port ?? ""}`);
+  }
+  const add = (raw: string) => {
+    if (!raw?.trim()) return;
+    const withProto =
+      /^\s*https?:\/\//i.test(raw) ? raw.trim() : `https://${raw.trim()}`;
+    let u: URL;
+    try {
+      u = new URL(withProto);
+    } catch {
+      return;
+    }
+    if (u.hostname === "localhost") return;
+    const key = `${u.protocol === "https:" ? "https" : "http"}://${u.hostname}:${u.port || ""}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    const pat: RemotePattern = {
+      protocol: u.protocol === "https:" ? "https" : "http",
+      hostname: u.hostname,
+      pathname: "/api/media/file/**",
+    };
+    if (u.port) pat.port = u.port;
+    list.push(pat);
+  };
+  add(process.env.NEXT_PUBLIC_API_URL || "");
+  add(process.env.BACKEND_URL || "");
+  return list;
+}
+
 const nextConfig: NextConfig = {
   output: "standalone",
   async headers() {
-    const backendUrl = process.env.BACKEND_URL || DEFAULT_MV_BACKEND_ORIGIN;
+    const backendOrigin = resolveBackendPublicOrigin();
     const apiUrl =
       process.env.NEXT_PUBLIC_API_URL ||
-      `${DEFAULT_MV_BACKEND_ORIGIN}/api`;
-    const backendOrigin = toOrigin(backendUrl, DEFAULT_MV_BACKEND_ORIGIN);
+      `${resolveBackendPublicOrigin()}/api`;
     const apiOrigin = toOrigin(
       apiUrl,
-      `${DEFAULT_MV_BACKEND_ORIGIN}/api`,
+      `${resolveBackendPublicOrigin()}/api`,
     );
     const csp = [
       "default-src 'self'",
@@ -53,20 +115,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "3000",
-        pathname: "/api/media/file/**",
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: mvBackendPort,
-        pathname: "/api/media/file/**",
-      },
-    ],
+    remotePatterns: buildMediaRemotePatterns(),
   },
   env: {
     BACKEND_URL: process.env.BACKEND_URL || DEFAULT_MV_BACKEND_ORIGIN,

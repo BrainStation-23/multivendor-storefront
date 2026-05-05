@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { getFooter } from "@/lib/api/globals";
-import { features } from "@/lib/config/features";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import {
   FooterColumns,
@@ -26,6 +24,8 @@ const fallbackColumns: FooterColumn[] = [
     links: [
       { label: "Cart", href: "/cart", visibility: "public" },
       { label: "Track Your Order", href: "/track-order", visibility: "public" },
+      { label: "Contact", href: "/contact", visibility: "public" },
+      { label: "About", href: "/about", visibility: "public" },
     ],
   },
 ];
@@ -94,17 +94,7 @@ export async function Footer({ locale }: FooterProps) {
         <FooterColumns locale={locale} columns={columns} />
         <div className="flex flex-col items-start justify-between gap-3 border-t border-slate-200 pt-4 text-xs text-slate-600 sm:flex-row sm:items-center dark:border-slate-800 dark:text-slate-400">
           <p>© {new Date().getFullYear()} BS Commerce</p>
-          <div className="flex items-center gap-3">
-            {features.multivendor ? (
-              <Link
-                href={`/${locale}/become-a-vendor`}
-                className="text-xs text-slate-600 underline-offset-4 hover:underline dark:text-slate-400"
-              >
-                Become a Vendor
-              </Link>
-            ) : null}
-            <LocaleSwitcher locale={locale} dataTestId="locale-switcher-footer" />
-          </div>
+          <LocaleSwitcher locale={locale} dataTestId="locale-switcher-footer" />
         </div>
       </div>
     </footer>

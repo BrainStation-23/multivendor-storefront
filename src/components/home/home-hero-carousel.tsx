@@ -153,7 +153,7 @@ export function HomeHeroCarousel({
             <button
               type="button"
               onClick={() => go(index - 1)}
-              className="absolute left-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border/80 bg-background/85 text-foreground shadow-sm backdrop-blur-sm transition hover:bg-background sm:left-3 sm:h-11 sm:w-11"
+              className="absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border/80 bg-background/85 text-foreground shadow-sm backdrop-blur-sm transition hover:bg-background sm:left-3 sm:h-11 sm:w-11"
               aria-label="Previous slide"
             >
               <ChevronLeftIcon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -161,13 +161,13 @@ export function HomeHeroCarousel({
             <button
               type="button"
               onClick={() => go(index + 1)}
-              className="absolute right-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border/80 bg-background/85 text-foreground shadow-sm backdrop-blur-sm transition hover:bg-background sm:right-3 sm:h-11 sm:w-11"
+              className="absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border/80 bg-background/85 text-foreground shadow-sm backdrop-blur-sm transition hover:bg-background sm:right-3 sm:h-11 sm:w-11"
               aria-label="Next slide"
             >
               <ChevronRightIcon className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
             <div
-              className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1.5 sm:bottom-5"
+              className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 sm:bottom-5"
               role="tablist"
               aria-label="Slide indicators"
             >

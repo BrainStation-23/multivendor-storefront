@@ -121,6 +121,7 @@ export default async function VendorStorePage({
             quickViewGalleryLabels={dict.product.gallery}
             quickViewProductDetailsTitle={dict.product.productDetails}
             quickViewProductDetailsSeeLess={dict.product.descriptionSeeLess}
+            compareLabels={dict.catalog.compare}
           />
           <Pagination
             currentPage={products.page}

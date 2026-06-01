@@ -163,6 +163,13 @@ export function MobileMenu({
                         >
                           My orders
                         </DrawerRow>
+                        <DrawerRow
+                          href={`/${locale}/account/wishlist`}
+                          onClick={onClose}
+                          icon={<IconClipboard />}
+                        >
+                          Wishlist
+                        </DrawerRow>
                         <button
                           type="button"
                           onClick={handleLogout}

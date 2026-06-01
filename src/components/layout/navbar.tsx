@@ -240,6 +240,17 @@ export function Navbar({ locale, navItems }: NavbarProps) {
                     </Link>
                   </MenuItem>
                   <MenuItem>
+                    <Link
+                      href={`/${locale}/account/wishlist`}
+                      className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted"
+                    >
+                      <span className="text-muted-foreground" aria-hidden>
+                        <IconClipboard className="h-4 w-4" />
+                      </span>
+                      Wishlist
+                    </Link>
+                  </MenuItem>
+                  <MenuItem>
                     <button
                       type="button"
                       onClick={() => void logout()}

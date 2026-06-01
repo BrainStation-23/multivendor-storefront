@@ -61,7 +61,7 @@ export function ThemeSwitcher({
       ) : null}
       <select
         id={`${idPrefix}-select`}
-        value={theme ?? "system"}
+        value={theme ?? "light"}
         onChange={(e) => setTheme(e.target.value)}
         className={`h-9 rounded-md border border-border bg-card py-1 pl-2 pr-8 text-xs font-medium text-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-ring ${fullWidth ? "min-w-0 flex-1" : "max-w-36"}`}
       >
